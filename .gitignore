@@ -1,2 +1,4 @@
 .env
 config.py
+airflow.cfg
+config/airflow.cfg
