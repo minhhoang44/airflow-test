@@ -1,0 +1,11 @@
+{"timestamp":"2026-03-03T03:28:01.319905Z","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2026-03-03T03:28:01.322139Z","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/weather_dag.py","logger":"airflow.models.dagbag.BundleDagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2026-03-03T03:28:01.340386Z","level":"warning","event":"The `airflow.operators.python.PythonOperator` attribute is deprecated. Please use `'airflow.providers.standard.operators.python.PythonOperator'`.","category":"DeprecatedImportWarning","filename":"/opt/airflow/dags/weather_dag.py","lineno":5,"logger":"py.warnings"}
+{"timestamp":"2026-03-03T03:28:01.357459Z","level":"info","event":"Task instance is in running state","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.357811Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.358091Z","level":"info","event":"Current task name:transform_load_weather_data","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.358278Z","level":"info","event":"Dag name:weather_dag_1","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.380574Z","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator","filename":"python.py","lineno":230}
+{"timestamp":"2026-03-03T03:28:01.399578Z","level":"info","event":"Task instance in success state","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.400280Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","logger":"task.stdout"}
+{"timestamp":"2026-03-03T03:28:01.400704Z","level":"info","event":"Task operator:<Task(PythonOperator): transform_load_weather_data>","logger":"task.stdout"}

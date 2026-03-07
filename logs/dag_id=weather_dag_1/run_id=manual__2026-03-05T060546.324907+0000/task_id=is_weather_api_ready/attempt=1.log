@@ -1,0 +1,11 @@
+{"timestamp":"2026-03-05T06:05:47.579453Z","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2026-03-05T06:05:47.581272Z","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/weather_dag.py","logger":"airflow.models.dagbag.BundleDagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2026-03-05T06:05:47.640332Z","level":"info","event":"Task instance is in running state","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.640882Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.641406Z","level":"info","event":"Current task name:is_weather_api_ready","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.641647Z","level":"info","event":"Dag name:weather_dag_1","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.640946Z","level":"info","event":"Poking: data/2.5/weather?q=Hanoi&appid=cf665354e835e8b0bd8bb26a45139b18","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"http.py","lineno":138}
+{"timestamp":"2026-03-05T06:05:47.823960Z","level":"info","event":"Success criteria met. Exiting.","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"sensor.py","lineno":250}
+{"timestamp":"2026-03-05T06:05:47.839135Z","level":"info","event":"Task instance in success state","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.839457Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","logger":"task.stdout"}
+{"timestamp":"2026-03-05T06:05:47.839832Z","level":"info","event":"Task operator:<Task(HttpSensor): is_weather_api_ready>","logger":"task.stdout"}

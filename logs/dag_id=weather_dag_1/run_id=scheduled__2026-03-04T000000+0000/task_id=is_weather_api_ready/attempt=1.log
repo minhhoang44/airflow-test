@@ -1,0 +1,12 @@
+{"timestamp":"2026-03-05T03:40:34.690895Z","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2026-03-05T03:40:34.692370Z","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/weather_dag.py","logger":"airflow.models.dagbag.BundleDagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2026-03-05T03:40:34.748557Z","level":"warning","event":"The `airflow.operators.python.PythonOperator` attribute is deprecated. Please use `'airflow.providers.standard.operators.python.PythonOperator'`.","category":"DeprecatedImportWarning","filename":"/opt/airflow/dags/weather_dag.py","lineno":5,"logger":"py.warnings"}
+{"timestamp":"2026-03-05T03:40:34.800373Z","level":"info","event":"Task instance is in running state","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:34.801103Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:34.801538Z","level":"info","event":"Current task name:is_weather_api_ready","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:34.801880Z","level":"info","event":"Dag name:weather_dag_1","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:34.801114Z","level":"info","event":"Poking: data/2.5/weather?q=Hanoi&appid=cf665354e835e8b0bd8bb26a45139b18","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"http.py","lineno":138}
+{"timestamp":"2026-03-05T03:40:35.017674Z","level":"info","event":"Success criteria met. Exiting.","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"sensor.py","lineno":250}
+{"timestamp":"2026-03-05T03:40:35.038678Z","level":"info","event":"Task instance in success state","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:35.039119Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","logger":"task.stdout"}
+{"timestamp":"2026-03-05T03:40:35.039567Z","level":"info","event":"Task operator:<Task(HttpSensor): is_weather_api_ready>","logger":"task.stdout"}
