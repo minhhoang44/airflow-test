@@ -1,0 +1,11 @@
+{"timestamp":"2026-04-16T11:29:03.802387Z","level":"info","event":"DAG bundles loaded: dags-folder, example_dags","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2026-04-16T11:29:03.809577Z","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/weather_dag.py","logger":"airflow.models.dagbag.BundleDagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2026-04-16T11:29:04.336017Z","level":"info","event":"Task instance is in running state","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:04.338191Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.QUEUED","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:04.338690Z","level":"info","event":"Current task name:is_weather_api_ready_beijing","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:04.339174Z","level":"info","event":"Dag name:weather_dag_1","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:04.337387Z","level":"info","event":"Poking: data/2.5/weather?q=Beijing&appid=cf665354e835e8b0bd8bb26a45139b18","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"http.py","lineno":138}
+{"timestamp":"2026-04-16T11:29:04.572458Z","level":"info","event":"Success criteria met. Exiting.","logger":"airflow.task.operators.airflow.providers.http.sensors.http.HttpSensor","filename":"sensor.py","lineno":250}
+{"timestamp":"2026-04-16T11:29:05.019897Z","level":"info","event":"Task instance in success state","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:05.020387Z","level":"info","event":" Previous state of the Task instance: TaskInstanceState.RUNNING","logger":"task.stdout"}
+{"timestamp":"2026-04-16T11:29:05.022940Z","level":"info","event":"Task operator:<Task(HttpSensor): is_weather_api_ready_beijing>","logger":"task.stdout"}

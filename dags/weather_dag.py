@@ -20,45 +20,49 @@ default_args = {
 def kelvin_to_celsius(temp_in_kelvin):
     temp_in_celsius = (temp_in_kelvin - 273.15)
     return temp_in_celsius
-def transform_load_data(task_instance):
-    data = task_instance.xcom_pull(task_ids="extract_weather_data")
-    city = data["name"]
-    weather_description = data["weather"][0]['description']
-    temp = kelvin_to_celsius(data["main"]["temp"])
-    feels_like= kelvin_to_celsius(data["main"]["feels_like"])
-    min_temp = kelvin_to_celsius(data["main"]["temp_min"])
-    max_temp = kelvin_to_celsius(data["main"]["temp_max"])
-    pressure = data["main"]["pressure"]
-    humidity = data["main"]["humidity"]
-    wind_speed = data["wind"]["speed"]
-    timezone_offset = timedelta(seconds=data['timezone'])
-    time_of_record = datetime.fromtimestamp(data['dt'], UTC) + timezone_offset
-    sunrise_time = datetime.fromtimestamp(data['sys']['sunrise'], UTC) + timezone_offset
-    sunset_time = datetime.fromtimestamp(data['sys']['sunset'], UTC) + timezone_offset
-    transformed_data = {"City": city,
-                            "Description": weather_description,
-                            "Temperature (C)": temp,
-                            "Feels Like (C)": feels_like,
-                            "Minimum Temp (C)":min_temp,
-                            "Maximum Temp (C)": max_temp,
-                            "Pressure": pressure,
-                            "Humidity": humidity,
-                            "Wind Speed": wind_speed,
-                            "Time of Record": time_of_record,
-                            "Sunrise (Local Time)":sunrise_time,
-                            "Sunset (Local Time)": sunset_time                        
-                            }
-    transformed_data_list = [transformed_data]
+def transform_load_data(extract_task_ids,ti):
+    all_raw_data = ti.xcom_pull(task_ids=extract_task_ids)    
+    transformed_data_list = []
+    for data in all_raw_data:
+        if not data: 
+            continue
+        city = data["name"]
+        weather_description = data["weather"][0]['description']
+        temp = kelvin_to_celsius(data["main"]["temp"])
+        feels_like= kelvin_to_celsius(data["main"]["feels_like"])
+        min_temp = kelvin_to_celsius(data["main"]["temp_min"])
+        max_temp = kelvin_to_celsius(data["main"]["temp_max"])
+        pressure = data["main"]["pressure"]
+        humidity = data["main"]["humidity"]
+        wind_speed = data["wind"]["speed"]
+        timezone_offset = timedelta(seconds=data['timezone'])
+        time_of_record = datetime.fromtimestamp(data['dt'], UTC) + timezone_offset
+        sunrise_time = datetime.fromtimestamp(data['sys']['sunrise'], UTC) + timezone_offset
+        sunset_time = datetime.fromtimestamp(data['sys']['sunset'], UTC) + timezone_offset
+        transformed_data = {"City": city,
+                                "Description": weather_description,
+                                "Temperature (C)": temp,
+                                "Feels Like (C)": feels_like,
+                                "Minimum Temp (C)":min_temp,
+                                "Maximum Temp (C)": max_temp,
+                                "Pressure": pressure,
+                                "Humidity": humidity,
+                                "Wind Speed": wind_speed,
+                                "Time of Record": time_of_record,
+                                "Sunrise (Local Time)":sunrise_time,
+                                "Sunset (Local Time)": sunset_time                        
+                                }
+        transformed_data_list.append(transformed_data)
     df_data = pd.DataFrame(transformed_data_list)
     now = datetime.now()
     dt_string = now.strftime("%d%m%Y%H%M%S")
-    dt_string = 'current_weather_data_hanoi_' + dt_string
+    dt_string = 'current_weather_data_' + dt_string
     file_path = f"/tmp/{dt_string}.csv"
     
     df_data.to_csv(file_path, index=False)
     return file_path
-def load_csv_to_postgres(task_instance):
-    csv_file_path = task_instance.xcom_pull(task_ids="transform_load_weather_data")
+def load_csv_to_postgres(transform_task_id, ti):
+    csv_file_path = ti.xcom_pull(task_ids=transform_task_id)
     df = pd.read_csv(csv_file_path) 
 
     # Gọi hook của Postgres
@@ -72,32 +76,51 @@ def load_csv_to_postgres(task_instance):
         index=False
     )
     os.remove(csv_file_path)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+cities_file_path = os.path.join(BASE_DIR, 'config', 'cities.json')
+with open(cities_file_path, 'r', encoding='utf-8') as f:
+    CITIES = json.load(f)
 with DAG(
     dag_id='weather_dag_1',
     default_args=default_args,
     schedule='@daily',   
     catchup=False
 ) as dag:
+    # Mảng để lưu lại tên các task lấy dữ liệu
+    extract_task_ids = []
+    # Mảng để lưu lại các đối tượng task, dùng để nối luồng ở cuối
+    extract_tasks = []
+    for city in CITIES:
+        city_task_suffix = city.replace(" ", "_").lower()        
+        sensor_task_id = f'is_weather_api_ready_{city_task_suffix}'
+        extract_task_id = f'extract_weather_data_{city_task_suffix}'
 
-    is_weather_api_ready = HttpSensor(
-        task_id='is_weather_api_ready',
-        http_conn_id='weathermap_api',
-        endpoint=f'data/2.5/weather?q=Hanoi&appid={API_KEY}'
-    )
-    extract_weather_data = HttpOperator(
-        task_id = 'extract_weather_data',
-        http_conn_id = 'weathermap_api',
-        endpoint=f'data/2.5/weather?q=Hanoi&appid={API_KEY}',
-        method = 'GET',
-        response_filter= lambda r: json.loads(r.text),
-        log_response=True
+        is_weather_api_ready = HttpSensor(
+            task_id=sensor_task_id,
+            http_conn_id='weathermap_api',
+            endpoint=f'data/2.5/weather?q={city}&appid={API_KEY}'
         )
+        extract_weather_data = HttpOperator(
+            task_id = extract_task_id,
+            http_conn_id = 'weathermap_api',
+            endpoint=f'data/2.5/weather?q={city}&appid={API_KEY}',
+            method = 'GET',
+            response_filter= lambda r: json.loads(r.text),
+            log_response=True
+        )
+        is_weather_api_ready >> extract_weather_data
+        extract_task_ids.append(extract_task_id)
+        extract_tasks.append(extract_weather_data)
     transform_load_weather_data = PythonOperator(
         task_id= 'transform_load_weather_data',
-        python_callable=transform_load_data
+        python_callable=transform_load_data,
+        op_kwargs={'extract_task_ids': extract_task_ids}
         )
     load_csv_to_sql_server = PythonOperator(
         task_id='load_csv_to_sql_server',
-        python_callable=load_csv_to_postgres
+        python_callable=load_csv_to_postgres,
+        op_kwargs={'transform_task_id': 'transform_load_weather_data'}
     )
-    is_weather_api_ready >> extract_weather_data >> transform_load_weather_data >> load_csv_to_sql_server
+    for extract_task in extract_tasks:
+        extract_task >> transform_load_weather_data
+    transform_load_weather_data >> load_csv_to_sql_server
